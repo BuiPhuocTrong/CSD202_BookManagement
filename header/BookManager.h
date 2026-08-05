@@ -29,7 +29,6 @@ public:
     // Insert
     void insert(Book* b);
     Node* insert(Book* b, Node* p); // recursion
-    void insert2(Book* b);           // loop
 
     // Traversal & Display
     void visit(Node* p);
