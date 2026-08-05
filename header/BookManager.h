@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class BookManager_BST {
+class BookManager_BST{
 public:
     Node* root;
 
@@ -16,10 +16,14 @@ public:
     BookManager_BST();
     ~BookManager_BST();
 
+    //File Management
+    Node* loadFromFile(ifstream& fin);
+    void saveToFile(Node* root, ofstream& fout);
+
     // Helper method
     void clear(Node* p);
 
-    // Core Status
+    //Check empty
     bool isEmpty();
 
     // Insert
