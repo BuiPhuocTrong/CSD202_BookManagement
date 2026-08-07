@@ -80,24 +80,19 @@ void BookManager_BST:: saveToFile(Node* root, ofstream& fout)
     saveToFile(root->right, fout);
 }
 
-void BookManager_BST::inOrder(Node* root)
-{
-    if (root == nullptr)
-        return;
-
-    inOrder(root->left);
-
-    cout << root->data->getId() << " | "
-         << root->data->getTitle() << " | "
-         << root->data->getAuthor() << " | "
-         << root->data->getYear() << endl;
-
-    inOrder(root->right);
+void displayBook(Node* p) {
+    if (p == nullptr) return;
+    cout << p->data->getId() << " | "
+         << p->data->getTitle() << " | "
+         << p->data->getAuthor() << " | "
+         << p->data->getYear() << endl;
 }
 
 //Insert, recursive
-void BookManager_BST::insert(Book* b) {
-    root = insert(b, root);
+void BookManager_BST::insertBook() {
+    Book b = inputBook();
+    Book *book = &b;
+    root = insert(book, root);
 }
 Node* BookManager_BST::insert(Book* b, Node* p) {
     if (p == nullptr) return new Node(b);
@@ -110,7 +105,7 @@ Node* BookManager_BST::insert(Book* b, Node* p) {
     return p;
 }
 
-//Delete by Merging Left
+//Delete by Merging Left (recursion)
 Node* BookManager_BST::deleteByMerging(Node* root, const string& id)
 {
     if (root == nullptr) return nullptr;
@@ -202,17 +197,14 @@ bool isSubstringIgnoreCase(string str, string sub) {
     return str.find(sub) != string::npos;
 }
 
-//Search by title (BFS)
+// Search by title (Traverse entire tree)
 void BookManager_BST::searchByTitle(Node* root, const string& title){
     if (root == nullptr) return;
 
     searchByTitle(root->left, title);
 
     if (isSubstringIgnoreCase(root->data->getTitle(), title)){
-        cout << root->data->getId() << " | "
-             << root->data->getTitle() << " | "
-             << root->data->getAuthor() << " | "
-             << root->data->getYear() << endl;
+        displayBook(root);
     }
 
     searchByTitle(root->right, title);
@@ -278,4 +270,57 @@ void BookManager_BST::updateBook(){
         }
     }
     cout << "Book updated successfully." << endl;
+}
+
+//display In Order traversal
+//left -> root -> right
+void BookManager_BST::displayInOrder(Node* root){
+    if (root == nullptr)
+        return;
+
+    displayInOrder(root->left);
+
+    displayBook(root);
+
+    displayInOrder(root->right);
+}
+
+//display Pre Order traversal
+//root -> left -> right
+void BookManager_BST::displayPreOrder(Node* root){
+    if (root == nullptr) return;
+
+    displayBook(root);
+
+    displayPreOrder(root->left);
+    displayPreOrder(root->right);
+}
+
+//display Post Order traversal
+//left -> right -> root
+void BookManager_BST::displayPostOrder(Node* root){
+    if (root == nullptr) return;
+
+    displayPostOrder(root->left);
+    displayPostOrder(root->right);
+
+    displayBook(root);
+}
+
+//display breadth first traversal
+void BookManager_BST::displayBreadthFirst(Node *root) {
+    if (!root) return;
+
+    queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        Node* cur = q.front();
+        q.pop();
+
+        displayBook(cur);
+
+        if (cur->left) q.push(cur->left);
+        if (cur->right) q.push(cur->right);
+    }
 }

@@ -27,15 +27,14 @@ public:
     bool isEmpty();
 
     // Insert
-    void insert(Book* b);
+    void insertBook();
     Node* insert(Book* b, Node* p); // recursion
 
     // Traversal & Display
-    void visit(Node* p);
-    void preOrder(Node* p);
-    void postOrder(Node* p);
-    void inOrder(Node* p);
-    void BreadthFirst();
+    void displayPreOrder(Node* root);
+    void displayPostOrder(Node* root);
+    void displayInOrder(Node* root);
+    void displayBreadthFirst(Node* root);
 
     // Search
     Node* searchById(string key);
