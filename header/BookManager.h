@@ -31,6 +31,7 @@ public:
     Node* insert(Book* b, Node* p); // recursion
 
     // Traversal & Display
+    void displayBook(Node* p);
     void displayPreOrder(Node* root);
     void displayPostOrder(Node* root);
     void displayInOrder(Node* root);
@@ -41,8 +42,8 @@ public:
     void searchByTitle(Node* p, const string& title);
 
     // Deletion
-    void deleteByCopyingLeft(Node*p);
-    Node* deleteByMerging(Node* root, const string& id);
+    void deleteByCopyingLeft();
+    void deleteByMerging();
 
     //Update book by ID
     void updateBook();
@@ -56,6 +57,9 @@ public:
     // Statistics
     int countTotalBooks(Node* p);
     void countBooksByYear(Node* p, map<int, int>& yearMap);
+
+    //Balacing tree
+    void balanceBST();
 };
 
 #endif

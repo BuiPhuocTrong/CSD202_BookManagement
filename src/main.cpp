@@ -22,6 +22,7 @@ bool isRunning = true;
 
 
 void showMenu() {
+    clearScreen();
     cout << "============ LIBRARY MANAGEMENT ============\n"
          << "1. Add new book\n"
          << "2. Delete book (copying)\n"
@@ -37,6 +38,7 @@ void showMenu() {
          << "12. Rotate right at a node\n"
          << "13. Show total number of books\n"
          << "14. Number of books per publication year\n"
+         << "15. Automatically balance tree\n"
          << "0. Exit\n"
          << "============================================\n";
 }
@@ -47,7 +49,7 @@ void loopMenu() {
     do {
         showMenu();
 
-        inputIntegerInRange(choice, 0, 14, "==> Enter your selection: ");
+        inputIntegerInRange(choice, 0, 15, "==> Enter your selection: ");
 
         clearScreen();
 
@@ -60,7 +62,7 @@ void loopMenu() {
 
         // DELETE BOOK (COPYING)
         case 2:
-            library.deleteByCopying();
+            //library.deleteByCopying();
             break;
 
         // DELETE BOOK (MERGING)
@@ -71,13 +73,15 @@ void loopMenu() {
         // SEARCH BY ID
         case 4:
         {
-            Node* result = library.searchByID();
+            string id = inputString ("Enter book ID: ");
+            Node* result = library.searchById(id);
 
-            if (result == nullptr) {
+            if (!result) {
                 cout << "Book not found.\n";
             }
             else {
-                result->data.display();
+                cout << "Book found: \n";
+                library.displayBook(result);
             }
 
             waitEnter();
@@ -86,9 +90,12 @@ void loopMenu() {
 
         // SEARCH BY TITLE
         case 5:
-            library.searchByTitle(library.root);
+        {
+            string title = inputString("Enter title to search: \n");
+            library.searchByTitle(library.root, title);
             break;
-
+        }
+            
         // UPDATE BOOK
         case 6:
             library.updateBook();
@@ -120,26 +127,31 @@ void loopMenu() {
 
         // ROTATE LEFT
         case 11:
-            library.rotateLeft();
+            //library.rotateLeft();
             break;
 
         // ROTATE RIGHT
         case 12:
-            library.rotateRight();
+            //library.rotateRight();
             break;
 
         // TOTAL BOOKS
         case 13:
-            cout << "Total books: "
-                 << library.countBooks() << endl;
+            /*cout << "Total books: "
+                 << library.countBooks() << endl;*/
             waitEnter();
             break;
 
         // BOOKS PER PUBLICATION YEAR
         case 14:
-            library.countBooksByYear();
+            //library.countBooksByYear();
             waitEnter();
             break;
+
+        // Automatically balance 
+        case 15:
+            waitEnter();
+            break;    
 
         // EXIT
         case 0:
@@ -155,18 +167,17 @@ void loopMenu() {
 }
 
 int main (){
-    cout << "hello111";
     ifstream fin(BOOK_FILE);
 
     if (!fin.is_open()) {
         cout << "Cannot open file!\n";
         return 1;
     }
-
-    BookManager_BST manager;
-    manager.root = manager.loadFromFile(fin);
+    library.root = library.loadFromFile(fin);
 
     fin.close();
+
+    loopMenu();
 
     return 0;
 }

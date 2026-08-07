@@ -80,7 +80,7 @@ void BookManager_BST:: saveToFile(Node* root, ofstream& fout)
     saveToFile(root->right, fout);
 }
 
-void displayBook(Node* p) {
+void BookManager_BST::displayBook(Node* p) {
     if (p == nullptr) return;
     cout << p->data->getId() << " | "
          << p->data->getTitle() << " | "
@@ -106,16 +106,15 @@ Node* BookManager_BST::insert(Book* b, Node* p) {
 }
 
 //Delete by Merging Left (recursion)
-Node* BookManager_BST::deleteByMerging(Node* root, const string& id)
-{
+Node* delMerging(Node* root, const string& id){
     if (root == nullptr) return nullptr;
 
     //Finding
     if (id < root->data->getId()){
-        root->left = deleteByMerging(root->left, id);
+        root->left = delMerging(root->left, id);
     }
     else if (id > root->data->getId()){
-        root->right = deleteByMerging(root->right, id);
+        root->right = delMerging(root->right, id);
     }
     else{
         //Found
@@ -149,13 +148,30 @@ Node* BookManager_BST::deleteByMerging(Node* root, const string& id)
 
     return root;
 }
+void BookManager_BST::deleteByMerging(){
+    string id = inputString("Enter book ID: ");
 
-void BookManager_BST::deleteByCopyingLeft(Node*p){
+    if (isEmpty()){
+        cout << "Library has no books.\n";
+        return;
+    }
+    if (!searchById(id)){
+        cout << "Book not found.\n";
+        return;
+    }
+
+    root = delMerging(root, id);
+    cout << "Book with ID " << id << " deleted by Merging" << endl;
+}
+
+//Delete by copying left
+void delCopyingLeft(Node*p){
     if (p == nullptr || p->left == nullptr) return;
     //Internal node don't have rightmost leave
     if (p->left->right == nullptr) {
         Node* tmp = p->left;
         p->data = tmp->data;
+        tmp->data = nullptr;
         p->left = tmp->left;
         delete tmp;
     } else {
@@ -172,6 +188,23 @@ void BookManager_BST::deleteByCopyingLeft(Node*p){
         delete cur;
     }
 }
+void BookManager_BST::deleteByCopyingLeft(){
+    string id = inputString("Enter book ID: ");
+
+    if (isEmpty()){
+        cout << "Library has no books.\n";
+        return;
+    }
+    Node *temp = searchById(id);
+    if (!temp){
+        cout << "Book not found.\n";
+        return;
+    }
+
+    delCopyingLeft(temp);
+    cout << "Book with ID " << id << " deleted by Copying left" << endl;
+}
+
 
 //Search by ID
 Node* BookManager_BST::searchById(string key){
@@ -323,4 +356,39 @@ void BookManager_BST::displayBreadthFirst(Node *root) {
         if (cur->left) q.push(cur->left);
         if (cur->right) q.push(cur->right);
     }
+}
+
+//Sort for balancing tree
+void storeInOrder(Node* root, vector<Node*>& nodes) {
+    if (!root) return;
+
+    storeInOrder(root->left, nodes);
+    nodes.push_back(root);
+    storeInOrder(root->right, nodes);
+}
+
+Node* buildBalancedBST(vector<Node*>& nodes, int left, int right) {
+    if (left > right)
+        return nullptr;
+
+    int mid = (left + right) / 2;
+
+    Node* root = nodes[mid];
+
+    root->left = buildBalancedBST(nodes, left, mid - 1);
+    root->right = buildBalancedBST(nodes, mid + 1, right);
+
+    return root;
+}
+
+Node* balancingBST(Node* root) {
+    vector<Node*> nodes;
+
+    storeInOrder(root, nodes);
+
+    return buildBalancedBST(nodes, 0, nodes.size() - 1);
+}
+
+void BookManager_BST::balanceBST() {
+    root = balancingBST(root);
 }
