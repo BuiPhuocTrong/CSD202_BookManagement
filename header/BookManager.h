@@ -38,12 +38,15 @@ public:
     void BreadthFirst();
 
     // Search
-    Node* Search(string key);
-    void searchByTitle(Node* p, string title, vector<Node*>& result);
+    Node* searchById(string key);
+    void searchByTitle(Node* p, const string& title);
 
     // Deletion
     void deleteByCopyingLeft(Node*p);
     Node* deleteByMerging(Node* root, const string& id);
+
+    //Update book by ID
+    void updateBook();
 
     // Rotations
     void leftRotate(Node* p);

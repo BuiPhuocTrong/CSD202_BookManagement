@@ -1,5 +1,7 @@
 #include "../header/BookManager.h"
 #include "../header/Subjects.h"
+#include "../header/ConsoleInput.h"
+#include "../header/Validation.h"
 
 
 #include <iostream>
@@ -176,12 +178,104 @@ void BookManager_BST::deleteByCopyingLeft(Node*p){
     }
 }
 
-//Search
-Node* BookManager_BST::Search(string key){
+//Search by ID
+Node* BookManager_BST::searchById(string key){
     Node* cur = root;
     while (cur){
         if (cur->data->getId() == key) return cur;
         cur = (cur->data->getId() < key) ? cur->right : cur->left;
     }
     return nullptr;
+}
+
+// Check 'sub' is in 'str' or not (ignore case)
+bool isSubstringIgnoreCase(string str, string sub) {
+    if (sub.empty()) return true;
+
+    //lowercase
+    for (char &c : str) c = tolower(c);
+    for (char &c : sub) c = tolower(c);
+
+    // Check sub string
+    //find() -> return first index of sub in str, if not found return string::npos
+    //string::npos -> not found (const value)
+    return str.find(sub) != string::npos;
+}
+
+//Search by title (BFS)
+void BookManager_BST::searchByTitle(Node* root, const string& title){
+    if (root == nullptr) return;
+
+    searchByTitle(root->left, title);
+
+    if (isSubstringIgnoreCase(root->data->getTitle(), title)){
+        cout << root->data->getId() << " | "
+             << root->data->getTitle() << " | "
+             << root->data->getAuthor() << " | "
+             << root->data->getYear() << endl;
+    }
+
+    searchByTitle(root->right, title);
+}
+
+//Update Book by ID
+void BookManager_BST::updateBook(){
+    if (isEmpty()) {
+        cout << "The book list is empty." << endl;
+        return;
+    }
+    
+    string id = inputString("Enter book ID to update: ");
+
+    Node* p = searchById(id);
+    if (p == nullptr) {
+        cout << "Book not found." << endl;
+        return;
+    }
+
+    cout << "Current book details:" << endl
+         << "ID: " << p->data->getId() << endl
+         << "Title: " << p->data->getTitle() << endl
+         << "Author: " << p->data->getAuthor() << endl
+         << "Year: " << p->data->getYear() << endl;
+
+
+    int choice;
+    cout << "What would you like to update?" << endl
+         << "1. Title" << endl
+         << "2. Author" << endl
+         << "3. Year" << endl
+         << "4. All" << endl;     
+    inputIntegerInRange(choice, 1, 4, "Enter your choice (1-4): ");
+    
+    switch (choice) {
+        case 1: {
+            string newTitle = inputString("Enter new title: ");
+            p->data->setTitle(newTitle);
+            break;
+        }
+        case 2: {
+            string newAuthor = inputString("Enter new author: ");
+            p->data->setAuthor(newAuthor);
+            break;
+        }
+        case 3: {
+            int newYear;
+            inputIntegerInRange(newYear, 0, 9999, "Enter new year: ");
+            p->data->setYear(newYear);
+            break;
+        }
+        case 4: {
+            string newTitle = inputString("Enter new title: ");
+            string newAuthor = inputString("Enter new author: ");
+            int newYear;
+            inputIntegerInRange(newYear, 0, 9999, "Enter new year: ");
+
+            p->data->setTitle(newTitle);
+            p->data->setAuthor(newAuthor);
+            p->data->setYear(newYear);
+            break;
+        }
+    }
+    cout << "Book updated successfully." << endl;
 }
