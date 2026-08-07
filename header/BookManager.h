@@ -42,8 +42,8 @@ public:
     void searchByTitle(Node* p, string title, vector<Node*>& result);
 
     // Deletion
-    void deleteByCopyingLeft(string id);
-    void deleteByMergingLeft(string id);
+    void deleteByCopyingLeft(Node*p);
+    Node* deleteByMerging(Node* root, const string& id);
 
     // Rotations
     void leftRotate(Node* p);

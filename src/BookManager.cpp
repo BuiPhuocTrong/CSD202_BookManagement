@@ -104,8 +104,76 @@ Node* BookManager_BST::insert(Book* b, Node* p) {
         p->left = insert(b, p->left);
     else if (b->getId() > p->data->getId())
         p->right = insert(b, p->right);
-        
+
     return p;
+}
+
+//Delete by Merging Left
+Node* BookManager_BST::deleteByMerging(Node* root, const string& id)
+{
+    if (root == nullptr) return nullptr;
+
+    //Finding
+    if (id < root->data->getId()){
+        root->left = deleteByMerging(root->left, id);
+    }
+    else if (id > root->data->getId()){
+        root->right = deleteByMerging(root->right, id);
+    }
+    else{
+        //Found
+        Node* tmp = root;
+
+        // left subtree is empty
+        if (root->left == nullptr) root = root->right;
+
+        // right subtree is empty
+        else if (root->right == nullptr) root = root->left;
+
+        // have both subtrees
+        else{
+            Node* leftSubTree = root->left;
+            Node* rightMost = leftSubTree;
+
+            // find rightmost node of left subtree
+            while (rightMost->right != nullptr){
+                rightMost = rightMost->right;
+            }
+
+            // merge right subtree
+            rightMost->right = root->right;
+
+            // update new root
+            root = leftSubTree;
+        }
+
+        delete tmp;
+    }
+
+    return root;
+}
+
+void BookManager_BST::deleteByCopyingLeft(Node*p){
+    if (p == nullptr || p->left == nullptr) return;
+    //Internal node don't have rightmost leave
+    if (p->left->right == nullptr) {
+        Node* tmp = p->left;
+        p->data = tmp->data;
+        p->left = tmp->left;
+        delete tmp;
+    } else {
+        //have rightmost leave
+        Node* father = p->left;
+        Node* cur = father->right;
+        while (cur->right) {
+            father = cur;
+            cur = cur->right;
+        }
+        p->data = cur->data;
+        cur->data = nullptr; // Bcs cur and p point to same Book address, need to set cur point to nullptr to avoid double delete
+        father->right = cur->left;
+        delete cur;
+    }
 }
 
 //Search
