@@ -39,6 +39,7 @@ void showMenu() {
          << "13. Show total number of books\n"
          << "14. Number of books per publication year\n"
          << "15. Automatically balance tree\n"
+         << "16. Tree visualization\n"
          << "0. Exit\n"
          << "============================================\n";
 }
@@ -49,7 +50,7 @@ void loopMenu() {
     do {
         showMenu();
 
-        inputIntegerInRange(choice, 0, 15, "==> Enter your selection: ");
+        inputIntegerInRange(choice, 0, 16, "==> Enter your selection: ");
 
         clearScreen();
 
