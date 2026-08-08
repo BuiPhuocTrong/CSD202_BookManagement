@@ -18,7 +18,8 @@ public:
 
     //File Management
     Node* loadFromFile(ifstream& fin);
-    void saveToFile(Node* root, ofstream& fout);
+    void saved(Node* root, ofstream& fout);
+    void saveToFile();
 
     // Helper method
     void clear(Node* p);

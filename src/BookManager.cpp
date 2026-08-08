@@ -11,6 +11,8 @@
 #include <sstream>
 #include <fstream>
 
+#define BOOK_FILE "data/books.txt"
+
 using namespace std;
 
 BookManager_BST::BookManager_BST() {
@@ -63,10 +65,8 @@ Node* BookManager_BST::loadFromFile(ifstream& fin){
     return p;
 }
 
-void BookManager_BST:: saveToFile(Node* root, ofstream& fout)
-{
-    if (root == nullptr)
-    {
+void BookManager_BST::saved(Node* root, ofstream& fout){
+    if (root == nullptr){
         fout << "#\n";
         return;
     }
@@ -76,8 +76,21 @@ void BookManager_BST:: saveToFile(Node* root, ofstream& fout)
          << root->data->getAuthor() << "|"
          << root->data->getYear() << '\n';
 
-    saveToFile(root->left, fout);
-    saveToFile(root->right, fout);
+    saved(root->left, fout);
+    saved(root->right, fout);
+}
+
+void  BookManager_BST:: saveToFile (){
+    // Save BST to file
+    ofstream fout(BOOK_FILE);
+
+    if (!fout) {
+        cout << "Cannot open file.\n";
+        return;
+    }
+
+    saved(root, fout);
+    fout.close();
 }
 
 void BookManager_BST::displayBook(Node* p) {
@@ -91,8 +104,14 @@ void BookManager_BST::displayBook(Node* p) {
 //Insert, recursive
 void BookManager_BST::insertBook() {
     Book b = inputBook();
-    Book *book = &b;
+    if (searchById(b.getId()) != nullptr) {
+        cout << "Book ID already exists.\n";
+        return;
+    }
+    Book *book = new Book(b);
     root = insert(book, root);
+    
+    saveToFile();
 }
 Node* BookManager_BST::insert(Book* b, Node* p) {
     if (p == nullptr) return new Node(b);
@@ -161,6 +180,9 @@ void BookManager_BST::deleteByMerging(){
     }
 
     root = delMerging(root, id);
+
+    saveToFile();
+
     cout << "Book with ID " << id << " deleted by Merging" << endl;
 }
 
@@ -302,6 +324,7 @@ void BookManager_BST::updateBook(){
             break;
         }
     }
+    saveToFile();
     cout << "Book updated successfully." << endl;
 }
 
