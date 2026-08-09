@@ -10,6 +10,8 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <algorithm>
+
 
 #define BOOK_FILE "data/books.txt"
 
@@ -471,4 +473,15 @@ Node* balancingBST(Node* root) {
 
 void BookManager_BST::balanceBST() {
     root = balancingBST(root);
+}
+// Height calculation
+int BookManager_BST::getHeight(Node* p) {
+    if (p == nullptr) {
+        return 0; // Base case: height of an empty tree is 0
+    }
+    
+    int leftHeight = getHeight(p->left);
+    int rightHeight = getHeight(p->right);
+
+    return 1 + std::max(leftHeight, rightHeight);
 }
