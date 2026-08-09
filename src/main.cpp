@@ -127,6 +127,7 @@ void loopMenu() {
             break;
 
         // ROTATE LEFT
+<<<<<<< HEAD
         case 11: {
       cin.ignore(10000, '\n');
 
@@ -174,6 +175,16 @@ void loopMenu() {
     cin.get();
     break;
 }
+=======
+        case 11:
+            //library.rotateLeft();
+            break;
+
+        // ROTATE RIGHT
+        case 12:
+            //library.rotateRight();
+            break;
+>>>>>>> origin/develop
 
         // TOTAL BOOKS
         case 13:

@@ -19,6 +19,7 @@ public:
     //File Management
     Node* loadFromFile(ifstream& fin);
     void saveToFile(Node* root, ofstream& fout);
+    void saveToFile();
 
     // Helper method
     void clear(Node* p);
@@ -60,6 +61,9 @@ public:
 
     //Balacing tree
     void balanceBST();
+    
+    // Height calculation
+    int getHeight(Node* p);
 };
 
 #endif
