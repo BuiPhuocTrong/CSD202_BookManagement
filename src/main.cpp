@@ -128,15 +128,53 @@ void loopMenu() {
             break;
 
         // ROTATE LEFT
-        case 11:
-            //library.rotateLeft();
-            break;
+        case 11:{
+        cin.ignore(10000, '\n');
+
+   string id;
+    cout << "Enter book ID to rotate left: ";
+    cin >> id;
+
+    Node* p = library.searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+    } else if (p->right == nullptr) {
+        cout << "Node " << id << " has no right child to rotate left" << endl;
+    } else {
+        library.leftRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+    }
+
+    cout << "\nPress Enter to return to menu...";
+    cin.ignore(10000, '\n');
+    cin.get();
+    break;
+}
 
         // ROTATE RIGHT
-        case 12:
-            //library.rotateRight();
-            break;
+        case 12:{
+        cin.ignore(10000, '\n');
+         string id;
+    cout << "Enter book ID to rotate right: ";
+    cin >> id;
 
+    Node* p = library.searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+    } else if (p->left == nullptr) {
+        cout << "Node " << id << " has no left child to rotate right" << endl;
+    } else {
+        library.rightRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+    }
+
+    cout << "\nPress Enter to return to menu...";
+    cin.ignore(10000, '\n');
+    cin.get();
+    break;
+}
         // TOTAL BOOKS
         case 13:
             /*cout << "Total books: "
@@ -171,7 +209,8 @@ void loopMenu() {
 
         default:
             cout << "Invalid choice.\n";
-        }
+        break;
+    }
 
     } while (isRunning);
 }
