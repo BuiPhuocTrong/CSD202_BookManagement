@@ -61,6 +61,9 @@ public:
 
     //Balacing tree
     void balanceBST();
+
+     // Height calculation
+    int getHeight(Node* p);
 };
 
 #endif
