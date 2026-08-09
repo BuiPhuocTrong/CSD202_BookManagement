@@ -8,8 +8,13 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
+<<<<<<< HEAD
       "cwd": "f:/BookManagement/CSD202_BookManagement/src",
       "program": "f:/BookManagement/CSD202_BookManagement/src/build/Debug/outDebug",
+=======
+      "cwd": "f:/BookManagement/CSD202_BookManagement_new/CSD202_BookManagement/src",
+      "program": "f:/BookManagement/CSD202_BookManagement_new/CSD202_BookManagement/src/build/Debug/outDebug",
+>>>>>>> 04535274ea671d4c35ea88cb7ebccb6c95e916af
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

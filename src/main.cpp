@@ -40,6 +40,7 @@ void showMenu() {
          << "14. Number of books per publication year\n"
          << "15. Automatically balance tree\n"
          << "16. Tree visualization\n"
+         << "17. Check height of tree\n"
          << "0. Exit\n"
          << "============================================\n";
 }
@@ -50,7 +51,7 @@ void loopMenu() {
     do {
         showMenu();
 
-        inputIntegerInRange(choice, 0, 16, "==> Enter your selection: ");
+        inputIntegerInRange(choice, 0, 17, "==> Enter your selection: ");
 
         clearScreen();
 
@@ -152,7 +153,15 @@ void loopMenu() {
         // Automatically balance 
         case 15:
             waitEnter();
-            break;    
+            break;  
+            
+        case 17:
+        {
+            int height = library.getHeight(library.root);
+            cout << "Height of the tree: " << height << endl;
+            waitEnter();
+            break;
+        }     
 
         // EXIT
         case 0:

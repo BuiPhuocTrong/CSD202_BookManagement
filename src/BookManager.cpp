@@ -12,6 +12,7 @@
 #include <fstream>
 #include <algorithm>
 
+
 #define BOOK_FILE "data/books.txt"
 
 using namespace std;
@@ -416,10 +417,10 @@ Node* balancingBST(Node* root) {
 void BookManager_BST::balanceBST() {
     root = balancingBST(root);
 }
-//Check height of tree (Rooted at node p)
+// Height calculation
 int BookManager_BST::getHeight(Node* p) {
     if (p == nullptr) {
-        return 0; 
+        return 0; // Base case: height of an empty tree is 0
     }
     
     int leftHeight = getHeight(p->left);
