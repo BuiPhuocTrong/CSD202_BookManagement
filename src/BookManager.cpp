@@ -209,6 +209,7 @@ void delCopyingLeft(Node*p){
         father->right = cur->left;
         delete cur;
     }
+
 }
 void BookManager_BST::deleteByCopyingLeft(){
     string id = inputString("Enter book ID: ");
@@ -225,9 +226,65 @@ void BookManager_BST::deleteByCopyingLeft(){
 
     delCopyingLeft(temp);
     cout << "Book with ID " << id << " deleted by Copying left" << endl;
+    saveToFile();
 }
 
+// Delete by copying right
+void delCopyingRight(Node* p) {
+    if (p == nullptr || p->right == nullptr) return;
 
+    // Internal node doesn't have leftmost leaf
+    if (p->right->left == nullptr) {
+        Node* tmp = p->right;
+
+        p->data = tmp->data;
+        tmp->data = nullptr;
+
+        p->right = tmp->right;
+
+        delete tmp;
+    }
+    else {
+        // Have leftmost leaf
+        Node* father = p->right;
+        Node* cur = father->left;
+
+        while (cur->left) {
+            father = cur;
+            cur = cur->left;
+        }
+
+        p->data = cur->data;
+        cur->data = nullptr;
+
+        // cur may have a right child
+        father->left = cur->right;
+
+        delete cur;
+    }
+}
+
+void BookManager_BST::deleteByCopyingRight() {
+    string id = inputString("Enter book ID: ");
+
+    if (isEmpty()) {
+        cout << "Library has no books.\n";
+        return;
+    }
+
+    Node* temp = searchById(id);
+
+    if (!temp) {
+        cout << "Book not found.\n";
+        return;
+    }
+
+    delCopyingRight(temp);
+
+    cout << "Book with ID " << id
+         << " deleted by Copying right" << endl;
+    saveToFile();
+}
 //Search by ID
 Node* BookManager_BST::searchById(string key){
     Node* cur = root;
