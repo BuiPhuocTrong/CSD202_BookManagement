@@ -10,12 +10,9 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-<<<<<<< HEAD
-=======
 #include <algorithm>
 
 #define BOOK_FILE "data/books.txt"
->>>>>>> origin/develop
 
 using namespace std;
 
@@ -69,15 +66,8 @@ Node* BookManager_BST::loadFromFile(ifstream& fin){
     return p;
 }
 
-<<<<<<< HEAD
-void BookManager_BST:: saveToFile(Node* root, ofstream& fout)
-{
-    if (root == nullptr)
-    {
-=======
-void BookManager_BST::saved(Node* root, ofstream& fout){
+void saved(Node* root, ofstream& fout){
     if (root == nullptr){
->>>>>>> origin/develop
         fout << "#\n";
         return;
     }
@@ -87,10 +77,6 @@ void BookManager_BST::saved(Node* root, ofstream& fout){
          << root->data->getAuthor() << "|"
          << root->data->getYear() << '\n';
 
-<<<<<<< HEAD
-    saveToFile(root->left, fout);
-    saveToFile(root->right, fout);
-=======
     saved(root->left, fout);
     saved(root->right, fout);
 }
@@ -106,7 +92,6 @@ void  BookManager_BST:: saveToFile (){
 
     saved(root, fout);
     fout.close();
->>>>>>> origin/develop
 }
 
 void BookManager_BST::displayBook(Node* p) {
@@ -120,10 +105,6 @@ void BookManager_BST::displayBook(Node* p) {
 //Insert, recursive
 void BookManager_BST::insertBook() {
     Book b = inputBook();
-<<<<<<< HEAD
-    Book *book = &b;
-    root = insert(book, root);
-=======
     if (searchById(b.getId()) != nullptr) {
         cout << "Book ID already exists.\n";
         return;
@@ -132,7 +113,6 @@ void BookManager_BST::insertBook() {
     root = insert(book, root);
     
     saveToFile();
->>>>>>> origin/develop
 }
 Node* BookManager_BST::insert(Book* b, Node* p) {
     if (p == nullptr) return new Node(b);
@@ -201,12 +181,9 @@ void BookManager_BST::deleteByMerging(){
     }
 
     root = delMerging(root, id);
-<<<<<<< HEAD
-=======
 
     saveToFile();
 
->>>>>>> origin/develop
     cout << "Book with ID " << id << " deleted by Merging" << endl;
 }
 
@@ -348,10 +325,7 @@ void BookManager_BST::updateBook(){
             break;
         }
     }
-<<<<<<< HEAD
-=======
     saveToFile();
->>>>>>> origin/develop
     cout << "Book updated successfully." << endl;
 }
 
@@ -439,42 +413,6 @@ Node* balancingBST(Node* root) {
     return buildBalancedBST(nodes, 0, nodes.size() - 1);
 }
 
-<<<<<<< HEAD
-void BookManager_BST::balanceBST(){
-    root = balancingBST(root);
-}
-// left rotation
-void BookManager_BST::leftRotate(Node* p) {
-    if (p== nullptr || p->right == nullptr) return;
-    Node* q = p->right;
-    swap(p->data, q->data);
-    p->right = q->right;
-    q->right = q->left;
-    q->left = p->left;
-    p->left = q;
-}
-// right rotation
-void BookManager_BST::rightRotate(Node* p) {
-    if (p== nullptr || p->left == nullptr) return;
-    Node* q = p->left;
-    swap(p->data, q->data);
-   p->left = q->left;
-    q->left = q->right;
-    q->right = p->right;
-    p->right = q;
-}
-//left right rotation
-void BookManager_BST::leftRightRotate(Node* p) {
-    if (p== nullptr || p->left == nullptr) return;
-    leftRotate(p->left);
-    rightRotate(p);
-}
-//right left rotation
-void BookManager_BST::rightLeftRotate(Node* p) {
-    if (p== nullptr || p->right == nullptr) return;
-    rightRotate(p->right);
-    leftRotate(p);
-=======
 void BookManager_BST::balanceBST() {
     root = balancingBST(root);
 }
@@ -488,5 +426,4 @@ int BookManager_BST::getHeight(Node* p) {
     int rightHeight = getHeight(p->right);
 
     return 1 + std::max(leftHeight, rightHeight);
->>>>>>> origin/develop
 }
