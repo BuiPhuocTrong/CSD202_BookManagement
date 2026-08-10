@@ -144,8 +144,8 @@ void loopMenu() {
             
             // TOTAL BOOKS
             case 13:
-                /*cout << "Total books: "
-                    << library.countBooks() << endl;*/
+                cout << "Total books: "
+                    << library.countBooks() << endl;
                 waitEnter();
                 break;
 
