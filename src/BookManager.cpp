@@ -691,3 +691,43 @@ int BookManager_BST::countTotalBooks(Node* p)
          + countTotalBooks(p->left)
          + countTotalBooks(p->right);
 }
+//Count book by year 
+void BookManager_BST::countBooksByYear(
+    Node* p,
+    map<int, int>& yearMap)
+{
+    if (p == nullptr)
+        return;
+
+    // Count current book
+    int year = p->data->getYear();
+    yearMap[year]++;
+
+    // Traverse left subtree
+    countBooksByYear(p->left, yearMap);
+
+    // Traverse right subtree
+    countBooksByYear(p->right, yearMap);
+}
+//Display books by year : counting 
+void BookManager_BST::displayBooksByYear()
+{
+    map<int, int> yearMap;
+
+    countBooksByYear(root, yearMap);
+
+    if (yearMap.empty())
+    {
+        cout << "No books in the library.\n";
+        return;
+    }
+
+    cout << "Number of books per publication year:\n";
+    cout << "-------------------------------------\n";
+
+    for (const auto& item : yearMap)
+    {
+        cout << item.first << " : "
+             << item.second << endl;
+    }
+}

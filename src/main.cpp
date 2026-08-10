@@ -151,7 +151,7 @@ void loopMenu() {
 
             // BOOKS PER PUBLICATION YEAR
             case 14:
-                //library.countBooksByYear();
+                library.displayBooksByYear();
                 waitEnter();
                 break;
 

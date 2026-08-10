@@ -66,6 +66,7 @@ public:
     int countBooks();
     int countTotalBooks(Node* p);
     void countBooksByYear(Node* p, map<int, int>& yearMap);
+    void displayBooksByYear();
    
 
     //Balacing tree
