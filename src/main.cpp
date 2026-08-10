@@ -188,10 +188,12 @@ void loopMenu() {
             waitEnter();
             break;
 
-        // Automatically balance 
+// Automatically balance tree
         case 15:
+            cout << "================ AUTOMATICALLY BALANCE TREE ================\n";
+            library.balanceBST();
             waitEnter();
-            break;  
+            break;
             
         case 17:
         {
