@@ -65,17 +65,10 @@ void loopMenu() {
                 library.insertBook();
                 break;
 
-<<<<<<< HEAD
-        // DELETE BOOK (COPYING)
-        case 2:
-            library.deleteByCopying();
-            break;
-=======
             // DELETE BOOK (COPYING)
             case 2:
-                //library.deleteByCopying();
+                library.deleteByCopying();
                 break;
->>>>>>> 47f099924e41954c0dcf26eb2a1a42243e6255cb
 
             // DELETE BOOK (MERGING)
             case 3:
