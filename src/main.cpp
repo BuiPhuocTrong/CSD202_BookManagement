@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <windows.h>
+
 #include "../header/BookManager.h"
 #include "../header/Subjects.h"
 #include "../header/ConsoleInput.h"
@@ -38,9 +40,10 @@ void showMenu() {
          << "12. Rotate right at a node\n"
          << "13. Show total number of books\n"
          << "14. Number of books per publication year\n"
-         << "15. Automatically balance tree\n"
+         << "15. Check height of tree and balance check\n"
          << "16. Tree visualization\n"
-         << "17. Check height of tree\n"
+         << "17. Manual rotation at specific nodes\n"
+         << "18. Automatically balance tree\n"
          << "0. Exit\n"
          << "============================================\n";
 }
@@ -128,15 +131,53 @@ void loopMenu() {
             break;
 
         // ROTATE LEFT
-        case 11:
-            //library.rotateLeft();
-            break;
+        case 11:{
+        cin.ignore(10000, '\n');
+
+   string id;
+    cout << "Enter book ID to rotate left: ";
+    cin >> id;
+
+    Node* p = library.searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+    } else if (p->right == nullptr) {
+        cout << "Node " << id << " has no right child to rotate left" << endl;
+    } else {
+        library.leftRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+    }
+
+    cout << "\nPress Enter to return to menu...";
+    cin.ignore(10000, '\n');
+    cin.get();
+    break;
+}
 
         // ROTATE RIGHT
-        case 12:
-            //library.rotateRight();
-            break;
+        case 12:{
+        cin.ignore(10000, '\n');
+         string id;
+    cout << "Enter book ID to rotate right: ";
+    cin >> id;
 
+    Node* p = library.searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+    } else if (p->left == nullptr) {
+        cout << "Node " << id << " has no left child to rotate right" << endl;
+    } else {
+        library.rightRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+    }
+
+    cout << "\nPress Enter to return to menu...";
+    cin.ignore(10000, '\n');
+    cin.get();
+    break;
+}
         // TOTAL BOOKS
         case 13:
             /*cout << "Total books: "
@@ -150,18 +191,35 @@ void loopMenu() {
             waitEnter();
             break;
 
-        // Automatically balance 
+        // Height and Balance check  (still need to check)
         case 15:
+            int height = library.getHeight(library.root);
+            cout << "Height of the tree: " << height << endl;
             waitEnter();
             break;  
+
+        case 16:
+            library.printTree();
+            waitEnter();
+            break;
             
+        //Manual rotation at specific nodes    
         case 17:
         {
             int height = library.getHeight(library.root);
             cout << "Height of the tree: " << height << endl;
             waitEnter();
             break;
-        }     
+        }  
+
+        //Auto balance
+        case 18:
+        {
+            int height = library.getHeight(library.root);
+            cout << "Height of the tree: " << height << endl;
+            waitEnter();
+            break;
+        }  
 
         // EXIT
         case 0:
@@ -171,12 +229,15 @@ void loopMenu() {
 
         default:
             cout << "Invalid choice.\n";
-        }
+        break;
+    }
 
     } while (isRunning);
 }
 
 int main (){
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
     ifstream fin(BOOK_FILE);
 
     if (!fin.is_open()) {

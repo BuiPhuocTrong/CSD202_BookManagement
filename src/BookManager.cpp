@@ -12,10 +12,12 @@
 #include <fstream>
 #include <algorithm>
 
-
 #define BOOK_FILE "data/books.txt"
 
 using namespace std;
+
+#define LAST true
+#define NOT_LAST false
 
 BookManager_BST::BookManager_BST() {
     root = nullptr;
@@ -383,39 +385,58 @@ void BookManager_BST::displayBreadthFirst(Node *root) {
     }
 }
 
-//Sort for balancing tree
-void storeInOrder(Node* root, vector<Node*>& nodes) {
+// ==================== FEATURE 15: BALANCE BST ====================
+
+// Helper function: Traverse tree in In-order and store nodes into a vector
+static void storeInOrderNodes(Node* root, vector<Node*>& nodes) {
     if (!root) return;
-
-    storeInOrder(root->left, nodes);
+    storeInOrderNodes(root->left, nodes);
     nodes.push_back(root);
-    storeInOrder(root->right, nodes);
+    storeInOrderNodes(root->right, nodes);
 }
 
-Node* buildBalancedBST(vector<Node*>& nodes, int left, int right) {
-    if (left > right)
-        return nullptr;
+// Helper function: Rebuild a perfectly balanced BST from sorted nodes vector
+static Node* buildBalancedBSTHelper(vector<Node*>& nodes, int start, int end) {
+    if (start > end) return nullptr;
 
-    int mid = (left + right) / 2;
+    int mid = start + (end - start) / 2;
+    Node* p = nodes[mid];
 
-    Node* root = nodes[mid];
+    // Safely disconnect and reassign left and right child pointers
+    p->left = buildBalancedBSTHelper(nodes, start, mid - 1);
+    p->right = buildBalancedBSTHelper(nodes, mid + 1, end);
 
-    root->left = buildBalancedBST(nodes, left, mid - 1);
-    root->right = buildBalancedBST(nodes, mid + 1, right);
-
-    return root;
+    return p;
 }
 
-Node* balancingBST(Node* root) {
-    vector<Node*> nodes;
-
-    storeInOrder(root, nodes);
-
-    return buildBalancedBST(nodes, 0, nodes.size() - 1);
-}
-
+// Main function to execute Feature 15
 void BookManager_BST::balanceBST() {
-    root = balancingBST(root);
+    // 1. Guard clause: Check if tree is empty
+    if (isEmpty()) {
+        cout << "Library is empty. Nothing to balance!\n";
+        return;
+    }
+
+    // Get tree height prior to balancing for comparison
+    int oldHeight = getHeight(root);
+
+    // 2. Retrieve all nodes in ascending order of ID (In-order traversal)
+    vector<Node*> nodes;
+    storeInOrderNodes(root, nodes);
+
+    // 3. Reconstruct tree into a balanced BST
+    root = buildBalancedBSTHelper(nodes, 0, static_cast<int>(nodes.size()) - 1);
+
+    // Get updated tree height after balancing
+    int newHeight = getHeight(root);
+
+    // 4. Save updated tree structure to persistent storage
+    saveToFile();
+
+    // 5. Output operation results
+    cout << "==> Tree balanced successfully!\n";
+    cout << " - Old Tree Height: " << oldHeight << "\n";
+    cout << " - New Tree Height: " << newHeight << "\n";
 }
 // Height calculation
 int BookManager_BST::getHeight(Node* p) {
@@ -427,4 +448,109 @@ int BookManager_BST::getHeight(Node* p) {
     int rightHeight = getHeight(p->right);
 
     return 1 + std::max(leftHeight, rightHeight);
+}
+
+// Tree visualization
+void BookManager_BST::printTree()
+{
+    if (root == nullptr){
+        cout << "Library is empty.\n";
+        return;
+    }
+
+    cout << "\n================ BOOK TREE ================\n\n";
+    
+    // Print root
+    cout << root->data->getId() << endl;
+
+    //Case 1: root have both L/R
+    if (root->left != nullptr && root->right != nullptr){
+        // Left is NOT the last branch
+        printTreeHelper(root->left, "", NOT_LAST, 'L');
+        // Right IS the last branch
+        printTreeHelper(root->right, "", LAST, 'R');
+    }
+    //Case 2: Root only have left
+    else if (root->left != nullptr){
+        printTreeHelper(root->left, "", LAST, 'L');
+    }
+
+    //Case 3: Root only have right
+    else if (root->right != nullptr){
+        printTreeHelper(root->right, "", LAST, 'R');
+    }
+
+    cout << "\n============================================\n";
+}
+
+void BookManager_BST::printTreeHelper(Node* p, string prefix, bool isLast, char branch){
+    if (p == nullptr) return;
+
+    //Print current node
+    cout << prefix;
+
+    if (isLast)
+        cout << "└── ";
+    else
+        cout << "├── ";
+
+    cout << branch << ": " << p->data->getId() << endl;
+
+    // Leaf node, don't have both L/R
+    if (p->left == nullptr && p->right == nullptr) return;
+
+    // Case 1: Current node has both L/R
+    if (p->left != nullptr && p->right != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        // Left not last
+        printTreeHelper(p->left, newPrefix, NOT_LAST, 'L');
+        //Right is last
+        printTreeHelper(p->right, newPrefix, LAST, 'R');
+    }
+    // Case 2: Cur node only have Left
+    else if (p->left != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        printTreeHelper(p->left, newPrefix, LAST, 'L');
+    }
+    // Case 3: Cur node only have Right
+    else if (p->right != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        printTreeHelper(p->right, newPrefix, LAST, 'R');
+    }
+}
+
+// left rotation
+void BookManager_BST::leftRotate(Node* p) {
+    if (p== nullptr || p->right == nullptr) return;
+    Node* q = p->right;
+    swap(p->data, q->data);
+    p->right = q->right;
+    q->right = q->left;
+    q->left = p->left;
+    p->left = q;
+}
+// right rotation
+void BookManager_BST::rightRotate(Node* p) {
+    if (p== nullptr || p->left == nullptr) return;
+    Node* q = p->left;
+    swap(p->data, q->data);
+   p->left = q->left;
+    q->left = q->right;
+    q->right = p->right;
+    p->right = q;
+}
+//left right rotation
+void BookManager_BST::leftRightRotate(Node* p) {
+    if (p== nullptr || p->left == nullptr) return;
+    leftRotate(p->left);
+    rightRotate(p);
+}
+//right left rotation
+void BookManager_BST::rightLeftRotate(Node* p) {
+    if (p== nullptr || p->right == nullptr) return;
+    rightRotate(p->right);
+    leftRotate(p);
 }
