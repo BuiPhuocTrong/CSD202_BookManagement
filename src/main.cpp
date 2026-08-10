@@ -201,7 +201,7 @@ void loopMenu() {
         case 16:
             library.printTree();
             waitEnter();
-            break;  
+            break;
             
         //Manual rotation at specific nodes    
         case 17:
@@ -211,7 +211,7 @@ void loopMenu() {
             waitEnter();
             break;
         }  
-        
+
         //Auto balance
         case 18:
         {

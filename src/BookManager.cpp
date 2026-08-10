@@ -385,39 +385,58 @@ void BookManager_BST::displayBreadthFirst(Node *root) {
     }
 }
 
-//Sort for balancing tree
-void storeInOrder(Node* root, vector<Node*>& nodes) {
+// ==================== FEATURE 15: BALANCE BST ====================
+
+// Helper function: Traverse tree in In-order and store nodes into a vector
+static void storeInOrderNodes(Node* root, vector<Node*>& nodes) {
     if (!root) return;
-
-    storeInOrder(root->left, nodes);
+    storeInOrderNodes(root->left, nodes);
     nodes.push_back(root);
-    storeInOrder(root->right, nodes);
+    storeInOrderNodes(root->right, nodes);
 }
 
-Node* buildBalancedBST(vector<Node*>& nodes, int left, int right) {
-    if (left > right)
-        return nullptr;
+// Helper function: Rebuild a perfectly balanced BST from sorted nodes vector
+static Node* buildBalancedBSTHelper(vector<Node*>& nodes, int start, int end) {
+    if (start > end) return nullptr;
 
-    int mid = (left + right) / 2;
+    int mid = start + (end - start) / 2;
+    Node* p = nodes[mid];
 
-    Node* root = nodes[mid];
+    // Safely disconnect and reassign left and right child pointers
+    p->left = buildBalancedBSTHelper(nodes, start, mid - 1);
+    p->right = buildBalancedBSTHelper(nodes, mid + 1, end);
 
-    root->left = buildBalancedBST(nodes, left, mid - 1);
-    root->right = buildBalancedBST(nodes, mid + 1, right);
-
-    return root;
+    return p;
 }
 
-Node* balancingBST(Node* root) {
-    vector<Node*> nodes;
-
-    storeInOrder(root, nodes);
-
-    return buildBalancedBST(nodes, 0, nodes.size() - 1);
-}
-
+// Main function to execute Feature 15
 void BookManager_BST::balanceBST() {
-    root = balancingBST(root);
+    // 1. Guard clause: Check if tree is empty
+    if (isEmpty()) {
+        cout << "Library is empty. Nothing to balance!\n";
+        return;
+    }
+
+    // Get tree height prior to balancing for comparison
+    int oldHeight = getHeight(root);
+
+    // 2. Retrieve all nodes in ascending order of ID (In-order traversal)
+    vector<Node*> nodes;
+    storeInOrderNodes(root, nodes);
+
+    // 3. Reconstruct tree into a balanced BST
+    root = buildBalancedBSTHelper(nodes, 0, static_cast<int>(nodes.size()) - 1);
+
+    // Get updated tree height after balancing
+    int newHeight = getHeight(root);
+
+    // 4. Save updated tree structure to persistent storage
+    saveToFile();
+
+    // 5. Output operation results
+    cout << "==> Tree balanced successfully!\n";
+    cout << " - Old Tree Height: " << oldHeight << "\n";
+    cout << " - New Tree Height: " << newHeight << "\n";
 }
 // Height calculation
 int BookManager_BST::getHeight(Node* p) {
