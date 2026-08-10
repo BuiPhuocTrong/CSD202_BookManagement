@@ -485,3 +485,35 @@ int BookManager_BST::getHeight(Node* p) {
 
     return 1 + std::max(leftHeight, rightHeight);
 }
+// left rotation
+void BookManager_BST::leftRotate(Node* p) {
+    if (p== nullptr || p->right == nullptr) return;
+    Node* q = p->right;
+    swap(p->data, q->data);
+    p->right = q->right;
+    q->right = q->left;
+    q->left = p->left;
+    p->left = q;
+}
+// right rotation
+void BookManager_BST::rightRotate(Node* p) {
+    if (p== nullptr || p->left == nullptr) return;
+    Node* q = p->left;
+    swap(p->data, q->data);
+   p->left = q->left;
+    q->left = q->right;
+    q->right = p->right;
+    p->right = q;
+}
+//left right rotation
+void BookManager_BST::leftRightRotate(Node* p) {
+    if (p== nullptr || p->left == nullptr) return;
+    leftRotate(p->left);
+    rightRotate(p);
+}
+//right left rotation
+void BookManager_BST::rightLeftRotate(Node* p) {
+    if (p== nullptr || p->right == nullptr) return;
+    rightRotate(p->right);
+    leftRotate(p);
+}
