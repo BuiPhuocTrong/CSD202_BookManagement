@@ -64,7 +64,7 @@ void loopMenu() {
 
         // DELETE BOOK (COPYING)
         case 2:
-            //library.deleteByCopying();
+            library.deleteByCopying();
             break;
 
         // DELETE BOOK (MERGING)

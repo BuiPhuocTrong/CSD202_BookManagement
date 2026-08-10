@@ -43,7 +43,8 @@ public:
     void searchByTitle(Node* p, const string& title);
 
     // Deletion
-    void deleteByCopyingLeft();
+    void deleteByCopying();
+    void delCopying(Node* p, bool copyLeft);
     void deleteByMerging();
 
     //Update book by ID
