@@ -64,6 +64,13 @@ public:
 
      // Height calculation
     int getHeight(Node* p);
+    void printTree();
+    void printTreeHelper(
+    Node* p,
+    string prefix,
+    bool isLast,
+    char branch
+);
 };
 
 #endif

@@ -5,6 +5,10 @@ A010|Programming Pearls|Jon Bentley|1986
 #
 A030|Code Complete|Steve McConnell|2004
 #
+A040|2|2|222
+#
+A041|2|2|2
+#
 #
 D080|Introduction to Algorithms|Thomas H. Cormen|2022
 C060|Design Patterns|Erich Gamma|1994
