@@ -105,6 +105,22 @@ void BookManager_BST::displayBook(Node* p) {
          << p->data->getYear() << endl;
 }
 
+// Search by ID
+Node* BookManager_BST::searchById(string key) {
+    Node* p = root;
+
+    while (p != nullptr) {
+        if (key == p->data->getId())
+            return p;
+        else if (key < p->data->getId())
+            p = p->left;
+        else
+            p = p->right;
+    }
+
+    return nullptr;
+}
+
 //Insert, recursive
 void BookManager_BST::insertBook() {
     Book b = inputBook();
@@ -189,57 +205,139 @@ void BookManager_BST::deleteByMerging(){
 
     cout << "Book with ID " << id << " deleted by Merging" << endl;
 }
+// Delete by Copying////////////////////////////////////////////////////////
+void BookManager_BST::delCopying(Node* p, bool copyLeft)
+{
+    if (p == nullptr)
+        return;
 
-//Delete by copying left
-void delCopyingLeft(Node*p){
-    if (p == nullptr || p->left == nullptr) return;
-    //Internal node don't have rightmost leave
-    if (p->left->right == nullptr) {
-        Node* tmp = p->left;
-        p->data = tmp->data;
-        tmp->data = nullptr;
-        p->left = tmp->left;
-        delete tmp;
-    } else {
-        //have rightmost leave
-        Node* father = p->left;
-        Node* cur = father->right;
-        while (cur->right) {
+    Node* father;
+    Node* cur;
+
+    //cpying left 
+    if (copyLeft)
+    {
+        // Find the rightmost node
+        // in the left subtree
+        father = p;
+        cur = p->left;
+
+        while (cur->right != nullptr)
+        {
             father = cur;
             cur = cur->right;
         }
-        p->data = cur->data;
-        cur->data = nullptr; // Bcs cur and p point to same Book address, need to set cur point to nullptr to avoid double delete
-        father->right = cur->left;
-        delete cur;
-    }
-}
-void BookManager_BST::deleteByCopyingLeft(){
-    string id = inputString("Enter book ID: ");
 
-    if (isEmpty()){
+        // Transfer Book ownership
+        Book* oldData = p->data;
+
+        p->data = cur->data;
+        cur->data = oldData;
+
+        // Remove cur from the tree
+        if (father == p)
+        {
+            p->left = cur->left;
+        }
+        else
+        {
+            father->right = cur->left;
+        }
+
+        // cur now owns oldData.
+        // Node destructor will delete oldData.
+        delete cur;
+
+        return;
+    }
+
+    // coyping right
+    // Find the leftmost node
+    // in the right subtree
+    father = p;
+    cur = p->right;
+
+    while (cur->left != nullptr)
+    {
+        father = cur;
+        cur = cur->left;
+    }
+
+    // Transfer Book ownership
+    Book* oldData = p->data;
+
+    p->data = cur->data;
+    cur->data = oldData;
+
+    // Remove cur from the tree
+    if (father == p)
+    {
+        p->right = cur->right;
+    }
+    else
+    {
+        father->left = cur->right;
+    }
+
+    // cur now owns oldData.
+    // Node destructor will delete oldData.
+    delete cur;
+}
+
+// Delete Book by Copying/////////////////////////////////////////////////////////
+void BookManager_BST::deleteByCopying()
+{
+    // Check empty tree
+    if (isEmpty())
+    {
         cout << "Library has no books.\n";
         return;
     }
-    Node *temp = searchById(id);
-    if (!temp){
+    // Input Book ID
+    string id = inputString("Enter book ID: ");
+    // Search for the node
+    Node* p = searchById(id);
+    if (p == nullptr)
+    {
         cout << "Book not found.\n";
         return;
     }
-
-    delCopyingLeft(temp);
-    cout << "Book with ID " << id << " deleted by Copying left" << endl;
-}
-
-
-//Search by ID
-Node* BookManager_BST::searchById(string key){
-    Node* cur = root;
-    while (cur){
-        if (cur->data->getId() == key) return cur;
-        cur = (cur->data->getId() < key) ? cur->right : cur->left;
+    // Copying is used for a node
+    // with two children
+    if (p->left == nullptr || p->right == nullptr)
+    {
+        cout << "Cannot delete this book by copying.\n";
+        cout << "The selected node must have two children.\n";
+        return;
     }
-    return nullptr;
+    // Choose copying direction
+    int choice;
+    cout << "\n===== DELETE BY COPYING =====\n";
+    cout << "1. Copying Left\n";
+    cout << "2. Copying Right\n";
+    inputIntegerInRange(
+        choice,
+        1,
+        2,
+        "Enter your choice: "
+    );
+    bool copyLeft = (choice == 1);
+    // Perform deletion
+    delCopying(p, copyLeft);
+    cout << "\nBook with ID " << id
+         << " deleted by ";
+
+    if (copyLeft)
+    {
+        cout << "Copying Left.\n";
+    }
+    else
+    {
+        cout << "Copying Right.\n";
+    }
+
+    // Save updated tree
+    saveToFile();
 }
 
 // Check 'sub' is in 'str' or not (ignore case)
@@ -385,58 +483,39 @@ void BookManager_BST::displayBreadthFirst(Node *root) {
     }
 }
 
-// ==================== FEATURE 15: BALANCE BST ====================
-
-// Helper function: Traverse tree in In-order and store nodes into a vector
-static void storeInOrderNodes(Node* root, vector<Node*>& nodes) {
+//Sort for balancing tree
+void storeInOrder(Node* root, vector<Node*>& nodes) {
     if (!root) return;
-    storeInOrderNodes(root->left, nodes);
+
+    storeInOrder(root->left, nodes);
     nodes.push_back(root);
-    storeInOrderNodes(root->right, nodes);
+    storeInOrder(root->right, nodes);
 }
 
-// Helper function: Rebuild a perfectly balanced BST from sorted nodes vector
-static Node* buildBalancedBSTHelper(vector<Node*>& nodes, int start, int end) {
-    if (start > end) return nullptr;
+Node* buildBalancedBST(vector<Node*>& nodes, int left, int right) {
+    if (left > right)
+        return nullptr;
 
-    int mid = start + (end - start) / 2;
-    Node* p = nodes[mid];
+    int mid = (left + right) / 2;
 
-    // Safely disconnect and reassign left and right child pointers
-    p->left = buildBalancedBSTHelper(nodes, start, mid - 1);
-    p->right = buildBalancedBSTHelper(nodes, mid + 1, end);
+    Node* root = nodes[mid];
 
-    return p;
+    root->left = buildBalancedBST(nodes, left, mid - 1);
+    root->right = buildBalancedBST(nodes, mid + 1, right);
+
+    return root;
 }
 
-// Main function to execute Feature 15
-void BookManager_BST::balanceBST() {
-    // 1. Guard clause: Check if tree is empty
-    if (isEmpty()) {
-        cout << "Library is empty. Nothing to balance!\n";
-        return;
-    }
-
-    // Get tree height prior to balancing for comparison
-    int oldHeight = getHeight(root);
-
-    // 2. Retrieve all nodes in ascending order of ID (In-order traversal)
+Node* balancingBST(Node* root) {
     vector<Node*> nodes;
-    storeInOrderNodes(root, nodes);
 
-    // 3. Reconstruct tree into a balanced BST
-    root = buildBalancedBSTHelper(nodes, 0, static_cast<int>(nodes.size()) - 1);
+    storeInOrder(root, nodes);
 
-    // Get updated tree height after balancing
-    int newHeight = getHeight(root);
+    return buildBalancedBST(nodes, 0, nodes.size() - 1);
+}
 
-    // 4. Save updated tree structure to persistent storage
-    saveToFile();
-
-    // 5. Output operation results
-    cout << "==> Tree balanced successfully!\n";
-    cout << " - Old Tree Height: " << oldHeight << "\n";
-    cout << " - New Tree Height: " << newHeight << "\n";
+void BookManager_BST::balanceBST() {
+    root = balancingBST(root);
 }
 // Height calculation
 int BookManager_BST::getHeight(Node* p) {

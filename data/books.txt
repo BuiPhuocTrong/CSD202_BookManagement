@@ -1,7 +1,13 @@
 A030|Code Complete|Steve McConnell|2004
+<<<<<<< HEAD
+1|1|1|1
+=======
 A010|Programming Pearls|Jon Bentley|1986
+>>>>>>> 47f099924e41954c0dcf26eb2a1a42243e6255cb
 #
 A020|The C Programming Language|Brian W. Kernighan|1988
+?|3|1|2
+#
 #
 #
 C060|Design Patterns|Erich Gamma|1994
@@ -15,5 +21,7 @@ A041|2|2|2
 D080|Introduction to Algorithms|Thomas H. Cormen|2022
 #
 F100|Effective Modern C++|Scott Meyers|2014
+#
+q|q|q|222
 #
 #
