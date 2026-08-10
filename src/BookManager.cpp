@@ -554,3 +554,47 @@ void BookManager_BST::rightLeftRotate(Node* p) {
     rightRotate(p->right);
     leftRotate(p);
 }
+
+void BookManager_BST::rotateRight (){
+    cin.ignore(10000, '\n');
+    
+    string id = inputString("Enter book ID to rotate right: ");
+    Node* p = searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+        return;
+    } 
+    else if (p->left == nullptr) {
+        cout << "Node " << id << " has no left child to rotate right" << endl;
+        return;
+    } 
+    else {
+        rightRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+        return;
+    }
+
+}
+
+void BookManager_BST::rotateLeft(){
+    cin.ignore(10000, '\n');
+
+    string id = inputString("Enter book ID to rotate right: ");
+    Node* p = searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+        return;
+    } 
+    else if (p->right == nullptr) {
+        cout << "Node " << id << " has no right child to rotate left" << endl;
+        return;
+    } 
+    else {
+        leftRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+        return;
+    }
+
+} 
