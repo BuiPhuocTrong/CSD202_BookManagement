@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <windows.h>
+
 #include "../header/BookManager.h"
 #include "../header/Subjects.h"
 #include "../header/ConsoleInput.h"
@@ -38,9 +40,10 @@ void showMenu() {
          << "12. Rotate right at a node\n"
          << "13. Show total number of books\n"
          << "14. Number of books per publication year\n"
-         << "15. Automatically balance tree\n"
+         << "15. Check height of tree and balance check\n"
          << "16. Tree visualization\n"
-         << "17. Check height of tree\n"
+         << "17. Manual rotation at specific nodes\n"
+         << "18. Automatically balance tree\n"
          << "0. Exit\n"
          << "============================================\n";
 }
@@ -57,167 +60,149 @@ void loopMenu() {
 
         switch (choice) {
 
-        // ADD BOOK
-        case 1:
-            library.insertBook();
-            break;
+            // ADD BOOK
+            case 1:
+                library.insertBook();
+                break;
 
+<<<<<<< HEAD
         // DELETE BOOK (COPYING)
         case 2:
             library.deleteByCopying();
             break;
+=======
+            // DELETE BOOK (COPYING)
+            case 2:
+                //library.deleteByCopying();
+                break;
+>>>>>>> 47f099924e41954c0dcf26eb2a1a42243e6255cb
 
-        // DELETE BOOK (MERGING)
-        case 3:
-            library.deleteByMerging();
-            break;
+            // DELETE BOOK (MERGING)
+            case 3:
+                library.deleteByMerging();
+                break;
 
-        // SEARCH BY ID
-        case 4:
-        {
-            string id = inputString ("Enter book ID: ");
-            Node* result = library.searchById(id);
+            // SEARCH BY ID
+            case 4:
+            {
+                string id = inputString ("Enter book ID: ");
+                Node* result = library.searchById(id);
 
-            if (!result) {
-                cout << "Book not found.\n";
+                if (!result) {
+                    cout << "Book not found.\n";
+                }
+                else {
+                    cout << "Book found: \n";
+                    library.displayBook(result);
+                }
+
+                waitEnter();
+                break;
             }
-            else {
-                cout << "Book found: \n";
-                library.displayBook(result);
+
+            // SEARCH BY TITLE
+            case 5:
+            {
+                string title = inputString("Enter title to search: \n");
+                library.searchByTitle(library.root, title);
+                break;
+            }
+                
+            // UPDATE BOOK
+            case 6:
+                library.updateBook();
+                break;
+
+            // DISPLAY IN-ORDER
+            case 7:
+                library.displayInOrder(library.root);
+                waitEnter();
+                break;
+
+            // DISPLAY PRE-ORDER
+            case 8:
+                library.displayPreOrder(library.root);
+                waitEnter();
+                break;
+
+            // DISPLAY POST-ORDER
+            case 9:
+                library.displayPostOrder(library.root);
+                waitEnter();
+                break;
+
+            // DISPLAY breadth-first
+            case 10:
+                library.displayBreadthFirst(library.root);
+                waitEnter();
+                break;
+
+            // ROTATE LEFT
+            case 11:
+                library.rotateLeft();
+                waitEnter();
+                break; 
+
+            // ROTATE RIGHT
+            case 12:
+                library.rotateRight();
+                waitEnter;
+                break;
+            
+            // TOTAL BOOKS
+            case 13:
+                /*cout << "Total books: "
+                    << library.countBooks() << endl;*/
+                waitEnter();
+                break;
+
+            // BOOKS PER PUBLICATION YEAR
+            case 14:
+                //library.countBooksByYear();
+                waitEnter();
+                break;
+
+            // Height and Balance check  (still need to check)
+            case 15:
+            {
+                int height = library.getHeight(library.root);
+                cout << "Height of the tree: " << height << endl;
+                waitEnter();
+                break;  
             }
 
-            waitEnter();
+            case 16:
+            {
+                library.printTree();
+                waitEnter();
+                break;
+            }    
+                
+            //Manual rotation at specific nodes    
+            case 17:
+                //nothing
+                break;
+
+            //Auto balance
+            case 18:
+                break; 
+
+            // EXIT
+            case 0:
+                isRunning = false;
+                cout << "Exiting the program...\n";
+                break;
+
+            default:
+                cout << "Invalid choice.\n";
             break;
-        }
-
-        // SEARCH BY TITLE
-        case 5:
-        {
-            string title = inputString("Enter title to search: \n");
-            library.searchByTitle(library.root, title);
-            break;
-        }
-            
-        // UPDATE BOOK
-        case 6:
-            library.updateBook();
-            break;
-
-        // DISPLAY IN-ORDER
-        case 7:
-            library.displayInOrder(library.root);
-            waitEnter();
-            break;
-
-        // DISPLAY PRE-ORDER
-        case 8:
-            library.displayPreOrder(library.root);
-            waitEnter();
-            break;
-
-        // DISPLAY POST-ORDER
-        case 9:
-            library.displayPostOrder(library.root);
-            waitEnter();
-            break;
-
-        // DISPLAY breadth-first
-        case 10:
-            library.displayBreadthFirst(library.root);
-            waitEnter();
-            break;
-
-        // ROTATE LEFT
-        case 11:{
-        cin.ignore(10000, '\n');
-
-   string id;
-    cout << "Enter book ID to rotate left: ";
-    cin >> id;
-
-    Node* p = library.searchById(id);
-
-    if (p == nullptr) {
-        cout << "Book ID not found" << endl;
-    } else if (p->right == nullptr) {
-        cout << "Node " << id << " has no right child to rotate left" << endl;
-    } else {
-        library.leftRotate(p);
-        cout << "Rotation successful at node " << id << endl;
-    }
-
-    cout << "\nPress Enter to return to menu...";
-    cin.ignore(10000, '\n');
-    cin.get();
-    break;
-}
-
-        // ROTATE RIGHT
-        case 12:{
-        cin.ignore(10000, '\n');
-         string id;
-    cout << "Enter book ID to rotate right: ";
-    cin >> id;
-
-    Node* p = library.searchById(id);
-
-    if (p == nullptr) {
-        cout << "Book ID not found" << endl;
-    } else if (p->left == nullptr) {
-        cout << "Node " << id << " has no left child to rotate right" << endl;
-    } else {
-        library.rightRotate(p);
-        cout << "Rotation successful at node " << id << endl;
-    }
-
-    cout << "\nPress Enter to return to menu...";
-    cin.ignore(10000, '\n');
-    cin.get();
-    break;
-}
-        // TOTAL BOOKS
-        case 13:
-            /*cout << "Total books: "
-                 << library.countBooks() << endl;*/
-            waitEnter();
-            break;
-
-        // BOOKS PER PUBLICATION YEAR
-        case 14:
-            //library.countBooksByYear();
-            waitEnter();
-            break;
-
-// Automatically balance tree
-        case 15:
-            cout << "================ AUTOMATICALLY BALANCE TREE ================\n";
-            library.balanceBST();
-            waitEnter();
-            break;
-            
-        case 17:
-        {
-            int height = library.getHeight(library.root);
-            cout << "Height of the tree: " << height << endl;
-            waitEnter();
-            break;
-        }     
-
-        // EXIT
-        case 0:
-            isRunning = false;
-            cout << "Exiting the program...\n";
-            break;
-
-        default:
-            cout << "Invalid choice.\n";
-        break;
-    }
-
+        }    
     } while (isRunning);
 }
 
 int main (){
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
     ifstream fin(BOOK_FILE);
 
     if (!fin.is_open()) {

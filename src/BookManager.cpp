@@ -12,10 +12,12 @@
 #include <fstream>
 #include <algorithm>
 
-
 #define BOOK_FILE "data/books.txt"
 
 using namespace std;
+
+#define LAST true
+#define NOT_LAST false
 
 BookManager_BST::BookManager_BST() {
     root = nullptr;
@@ -526,6 +528,79 @@ int BookManager_BST::getHeight(Node* p) {
 
     return 1 + std::max(leftHeight, rightHeight);
 }
+
+// Tree visualization
+void BookManager_BST::printTree()
+{
+    if (root == nullptr){
+        cout << "Library is empty.\n";
+        return;
+    }
+
+    cout << "\n================ BOOK TREE ================\n\n";
+    
+    // Print root
+    cout << root->data->getId() << endl;
+
+    //Case 1: root have both L/R
+    if (root->left != nullptr && root->right != nullptr){
+        // Left is NOT the last branch
+        printTreeHelper(root->left, "", NOT_LAST, 'L');
+        // Right IS the last branch
+        printTreeHelper(root->right, "", LAST, 'R');
+    }
+    //Case 2: Root only have left
+    else if (root->left != nullptr){
+        printTreeHelper(root->left, "", LAST, 'L');
+    }
+
+    //Case 3: Root only have right
+    else if (root->right != nullptr){
+        printTreeHelper(root->right, "", LAST, 'R');
+    }
+
+    cout << "\n============================================\n";
+}
+
+void BookManager_BST::printTreeHelper(Node* p, string prefix, bool isLast, char branch){
+    if (p == nullptr) return;
+
+    //Print current node
+    cout << prefix;
+
+    if (isLast)
+        cout << "└── ";
+    else
+        cout << "├── ";
+
+    cout << branch << ": " << p->data->getId() << endl;
+
+    // Leaf node, don't have both L/R
+    if (p->left == nullptr && p->right == nullptr) return;
+
+    // Case 1: Current node has both L/R
+    if (p->left != nullptr && p->right != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        // Left not last
+        printTreeHelper(p->left, newPrefix, NOT_LAST, 'L');
+        //Right is last
+        printTreeHelper(p->right, newPrefix, LAST, 'R');
+    }
+    // Case 2: Cur node only have Left
+    else if (p->left != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        printTreeHelper(p->left, newPrefix, LAST, 'L');
+    }
+    // Case 3: Cur node only have Right
+    else if (p->right != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        printTreeHelper(p->right, newPrefix, LAST, 'R');
+    }
+}
+
 // left rotation
 void BookManager_BST::leftRotate(Node* p) {
     if (p== nullptr || p->right == nullptr) return;
@@ -558,3 +633,47 @@ void BookManager_BST::rightLeftRotate(Node* p) {
     rightRotate(p->right);
     leftRotate(p);
 }
+
+void BookManager_BST::rotateRight (){
+    cin.ignore(10000, '\n');
+    
+    string id = inputString("Enter book ID to rotate right: ");
+    Node* p = searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+        return;
+    } 
+    else if (p->left == nullptr) {
+        cout << "Node " << id << " has no left child to rotate right" << endl;
+        return;
+    } 
+    else {
+        rightRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+        return;
+    }
+
+}
+
+void BookManager_BST::rotateLeft(){
+    cin.ignore(10000, '\n');
+
+    string id = inputString("Enter book ID to rotate right: ");
+    Node* p = searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+        return;
+    } 
+    else if (p->right == nullptr) {
+        cout << "Node " << id << " has no right child to rotate left" << endl;
+        return;
+    } 
+    else {
+        leftRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+        return;
+    }
+
+} 
