@@ -144,14 +144,14 @@ void loopMenu() {
             
             // TOTAL BOOKS
             case 13:
-                /*cout << "Total books: "
-                    << library.countBooks() << endl;*/
+                cout << "Total books: "
+                    << library.countBooks() << endl;
                 waitEnter();
                 break;
 
             // BOOKS PER PUBLICATION YEAR
             case 14:
-                //library.countBooksByYear();
+                library.displayBooksByYear();
                 waitEnter();
                 break;
 

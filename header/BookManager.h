@@ -47,8 +47,9 @@ public:
     void searchByTitle(Node* p, const string& title);
 
     // Deletion
-    void deleteByCopyingLeft();
+    void deleteByCopying();
     void deleteByMerging();
+    void delCopying(Node*p, bool copyLeft);
 
     //Update book by ID
     void updateBook();
@@ -62,8 +63,11 @@ public:
     void rightLeftRotate(Node* p);
 
     // Statistics
+    int countBooks();
     int countTotalBooks(Node* p);
     void countBooksByYear(Node* p, map<int, int>& yearMap);
+    void displayBooksByYear();
+   
 
     //Balacing tree
     void balanceBST();
