@@ -1,16 +1,20 @@
-B050|Clean Code|Robert C. Martin|2008
-A020|The C Programming Language|Brian W. Kernighan|1988
+A030|Code Complete|Steve McConnell|2004
 A010|Programming Pearls|Jon Bentley|1986
 1|1|1|1
 #
 #
+A020|The C Programming Language|Brian W. Kernighan|1988
 #
-A030|Code Complete|Steve McConnell|2004
+#
+C060|Design Patterns|Erich Gamma|1994
+B050|Clean Code|Robert C. Martin|2008
+#
+A040|2|2|222
+#
+A041|2|2|2
 #
 #
 D080|Introduction to Algorithms|Thomas H. Cormen|2022
-C060|Design Patterns|Erich Gamma|1994
-#
 #
 F100|Effective Modern C++|Scott Meyers|2014
 #

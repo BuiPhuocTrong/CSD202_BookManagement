@@ -9,6 +9,19 @@
 using namespace std;
 
 class BookManager_BST{
+private:
+    
+    //Save file
+    void saved(Node* root, ofstream& fout);
+    void saveToFile();
+    // Helper method
+    void clear(Node* p);
+
+    //Check empty
+    bool isEmpty();
+
+    //Insert
+    Node* insert(Book* b, Node* p); // recursion
 public:
     Node* root;
 
@@ -16,20 +29,11 @@ public:
     BookManager_BST();
     ~BookManager_BST();
 
-    //File Management
+    //Load file
     Node* loadFromFile(ifstream& fin);
-    void saved(Node* root, ofstream& fout);
-    void saveToFile();
-
-    // Helper method
-    void clear(Node* p);
-
-    //Check empty
-    bool isEmpty();
 
     // Insert
     void insertBook();
-    Node* insert(Book* b, Node* p); // recursion
 
     // Traversal & Display
     void displayBook(Node* p);
@@ -43,27 +47,40 @@ public:
     void searchByTitle(Node* p, const string& title);
 
     // Deletion
-    void deleteByCopyingLeft();
+    void deleteByCopying();
     void deleteByMerging();
+    void delCopying(Node*p, bool copyLeft);
 
     //Update book by ID
     void updateBook();
 
     // Rotations
+    void rotateRight();
+    void rotateLeft();
     void leftRotate(Node* p);
     void rightRotate(Node* p);
     void leftRightRotate(Node* p);
     void rightLeftRotate(Node* p);
 
     // Statistics
+    int countBooks();
     int countTotalBooks(Node* p);
     void countBooksByYear(Node* p, map<int, int>& yearMap);
+    void displayBooksByYear();
+   
 
     //Balacing tree
     void balanceBST();
 
      // Height calculation
     int getHeight(Node* p);
+    void printTree();
+    void printTreeHelper(
+    Node* p,
+    string prefix,
+    bool isLast,
+    char branch
+);
 };
 
 #endif

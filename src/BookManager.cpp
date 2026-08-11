@@ -12,10 +12,12 @@
 #include <fstream>
 #include <algorithm>
 
-
 #define BOOK_FILE "data/books.txt"
 
 using namespace std;
+
+#define LAST true
+#define NOT_LAST false
 
 BookManager_BST::BookManager_BST() {
     root = nullptr;
@@ -103,6 +105,22 @@ void BookManager_BST::displayBook(Node* p) {
          << p->data->getYear() << endl;
 }
 
+// Search by ID
+Node* BookManager_BST::searchById(string key) {
+    Node* p = root;
+
+    while (p != nullptr) {
+        if (key == p->data->getId())
+            return p;
+        else if (key < p->data->getId())
+            p = p->left;
+        else
+            p = p->right;
+    }
+
+    return nullptr;
+}
+
 //Insert, recursive
 void BookManager_BST::insertBook() {
     Book b = inputBook();
@@ -187,57 +205,139 @@ void BookManager_BST::deleteByMerging(){
 
     cout << "Book with ID " << id << " deleted by Merging" << endl;
 }
+// Delete by Copying
+void BookManager_BST::delCopying(Node* p, bool copyLeft)
+{
+    if (p == nullptr)
+        return;
 
-//Delete by copying left
-void delCopyingLeft(Node*p){
-    if (p == nullptr || p->left == nullptr) return;
-    //Internal node don't have rightmost leave
-    if (p->left->right == nullptr) {
-        Node* tmp = p->left;
-        p->data = tmp->data;
-        tmp->data = nullptr;
-        p->left = tmp->left;
-        delete tmp;
-    } else {
-        //have rightmost leave
-        Node* father = p->left;
-        Node* cur = father->right;
-        while (cur->right) {
+    Node* father;
+    Node* cur;
+
+    //cpying left 
+    if (copyLeft)
+    {
+        // Find the rightmost node
+        // in the left subtree
+        father = p;
+        cur = p->left;
+
+        while (cur->right != nullptr)
+        {
             father = cur;
             cur = cur->right;
         }
-        p->data = cur->data;
-        cur->data = nullptr; // Bcs cur and p point to same Book address, need to set cur point to nullptr to avoid double delete
-        father->right = cur->left;
-        delete cur;
-    }
-}
-void BookManager_BST::deleteByCopyingLeft(){
-    string id = inputString("Enter book ID: ");
 
-    if (isEmpty()){
+        // Transfer Book ownership
+        Book* oldData = p->data;
+
+        p->data = cur->data;
+        cur->data = oldData;
+
+        // Remove cur from the tree
+        if (father == p)
+        {
+            p->left = cur->left;
+        }
+        else
+        {
+            father->right = cur->left;
+        }
+
+        // cur now owns oldData.
+        // Node destructor will delete oldData.
+        delete cur;
+
+        return;
+    }
+
+    // coyping right
+    // Find the leftmost node
+    // in the right subtree
+    father = p;
+    cur = p->right;
+
+    while (cur->left != nullptr)
+    {
+        father = cur;
+        cur = cur->left;
+    }
+
+    // Transfer Book ownership
+    Book* oldData = p->data;
+
+    p->data = cur->data;
+    cur->data = oldData;
+
+    // Remove cur from the tree
+    if (father == p)
+    {
+        p->right = cur->right;
+    }
+    else
+    {
+        father->left = cur->right;
+    }
+
+    // cur now owns oldData.
+    // Node destructor will delete oldData.
+    delete cur;
+}
+
+// Delete Book by Copying
+void BookManager_BST::deleteByCopying()
+{
+    // Check empty tree
+    if (isEmpty())
+    {
         cout << "Library has no books.\n";
         return;
     }
-    Node *temp = searchById(id);
-    if (!temp){
+    // Input Book ID
+    string id = inputString("Enter book ID: ");
+    // Search for the node
+    Node* p = searchById(id);
+    if (p == nullptr)
+    {
         cout << "Book not found.\n";
         return;
     }
-
-    delCopyingLeft(temp);
-    cout << "Book with ID " << id << " deleted by Copying left" << endl;
-}
-
-
-//Search by ID
-Node* BookManager_BST::searchById(string key){
-    Node* cur = root;
-    while (cur){
-        if (cur->data->getId() == key) return cur;
-        cur = (cur->data->getId() < key) ? cur->right : cur->left;
+    // Copying is used for a node
+    // with two children
+    if (p->left == nullptr || p->right == nullptr)
+    {
+        cout << "Cannot delete this book by copying.\n";
+        cout << "The selected node must have two children.\n";
+        return;
     }
-    return nullptr;
+    // Choose copying direction
+    int choice;
+    cout << "\n===== DELETE BY COPYING =====\n";
+    cout << "1. Copying Left\n";
+    cout << "2. Copying Right\n";
+    inputIntegerInRange(
+        choice,
+        1,
+        2,
+        "Enter your choice: "
+    );
+    bool copyLeft = (choice == 1);
+    // Perform deletion
+    delCopying(p, copyLeft);
+    cout << "\nBook with ID " << id
+         << " deleted by ";
+
+    if (copyLeft)
+    {
+        cout << "Copying Left.\n";
+    }
+    else
+    {
+        cout << "Copying Right.\n";
+    }
+
+    // Save updated tree
+    saveToFile();
 }
 
 // Check 'sub' is in 'str' or not (ignore case)
@@ -428,6 +528,79 @@ int BookManager_BST::getHeight(Node* p) {
 
     return 1 + std::max(leftHeight, rightHeight);
 }
+
+// Tree visualization
+void BookManager_BST::printTree()
+{
+    if (root == nullptr){
+        cout << "Library is empty.\n";
+        return;
+    }
+
+    cout << "\n================ BOOK TREE ================\n\n";
+    
+    // Print root
+    cout << root->data->getId() << endl;
+
+    //Case 1: root have both L/R
+    if (root->left != nullptr && root->right != nullptr){
+        // Left is NOT the last branch
+        printTreeHelper(root->left, "", NOT_LAST, 'L');
+        // Right IS the last branch
+        printTreeHelper(root->right, "", LAST, 'R');
+    }
+    //Case 2: Root only have left
+    else if (root->left != nullptr){
+        printTreeHelper(root->left, "", LAST, 'L');
+    }
+
+    //Case 3: Root only have right
+    else if (root->right != nullptr){
+        printTreeHelper(root->right, "", LAST, 'R');
+    }
+
+    cout << "\n============================================\n";
+}
+
+void BookManager_BST::printTreeHelper(Node* p, string prefix, bool isLast, char branch){
+    if (p == nullptr) return;
+
+    //Print current node
+    cout << prefix;
+
+    if (isLast)
+        cout << "└── ";
+    else
+        cout << "├── ";
+
+    cout << branch << ": " << p->data->getId() << endl;
+
+    // Leaf node, don't have both L/R
+    if (p->left == nullptr && p->right == nullptr) return;
+
+    // Case 1: Current node has both L/R
+    if (p->left != nullptr && p->right != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        // Left not last
+        printTreeHelper(p->left, newPrefix, NOT_LAST, 'L');
+        //Right is last
+        printTreeHelper(p->right, newPrefix, LAST, 'R');
+    }
+    // Case 2: Cur node only have Left
+    else if (p->left != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        printTreeHelper(p->left, newPrefix, LAST, 'L');
+    }
+    // Case 3: Cur node only have Right
+    else if (p->right != nullptr){
+        string newPrefix;
+        newPrefix = (isLast) ? prefix + "    " : prefix + "│   ";
+        printTreeHelper(p->right, newPrefix, LAST, 'R');
+    }
+}
+
 // left rotation
 void BookManager_BST::leftRotate(Node* p) {
     if (p== nullptr || p->right == nullptr) return;
@@ -459,4 +632,102 @@ void BookManager_BST::rightLeftRotate(Node* p) {
     if (p== nullptr || p->right == nullptr) return;
     rightRotate(p->right);
     leftRotate(p);
+}
+
+void BookManager_BST::rotateRight (){
+    cin.ignore(10000, '\n');
+    
+    string id = inputString("Enter book ID to rotate right: ");
+    Node* p = searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+        return;
+    } 
+    else if (p->left == nullptr) {
+        cout << "Node " << id << " has no left child to rotate right" << endl;
+        return;
+    } 
+    else {
+        rightRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+        return;
+    }
+
+}
+
+void BookManager_BST::rotateLeft(){
+    cin.ignore(10000, '\n');
+
+    string id = inputString("Enter book ID to rotate right: ");
+    Node* p = searchById(id);
+
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+        return;
+    } 
+    else if (p->right == nullptr) {
+        cout << "Node " << id << " has no right child to rotate left" << endl;
+        return;
+    } 
+    else {
+        leftRotate(p);
+        cout << "Rotation successful at node " << id << endl;
+        return;
+    }
+
+} 
+//Count total books
+int BookManager_BST::countBooks()
+{
+    return countTotalBooks(root);
+}
+int BookManager_BST::countTotalBooks(Node* p)
+{
+    if (p == nullptr)
+        return 0;
+
+    return 1
+         + countTotalBooks(p->left)
+         + countTotalBooks(p->right);
+}
+//Count book by year 
+void BookManager_BST::countBooksByYear(
+    Node* p,
+    map<int, int>& yearMap)
+{
+    if (p == nullptr)
+        return;
+
+    // Count current book
+    int year = p->data->getYear();
+    yearMap[year]++;
+
+    // Traverse left subtree
+    countBooksByYear(p->left, yearMap);
+
+    // Traverse right subtree
+    countBooksByYear(p->right, yearMap);
+}
+//Display books by year : counting 
+void BookManager_BST::displayBooksByYear()
+{
+    map<int, int> yearMap;
+
+    countBooksByYear(root, yearMap);
+
+    if (yearMap.empty())
+    {
+        cout << "No books in the library.\n";
+        return;
+    }
+
+    cout << "Number of books per publication year:\n";
+    cout << "-------------------------------------\n";
+
+    for (const auto& item : yearMap)
+    {
+        cout << item.first << " : "
+             << item.second << endl;
+    }
 }
