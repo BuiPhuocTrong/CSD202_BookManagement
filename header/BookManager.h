@@ -61,6 +61,7 @@ public:
     void rightRotate(Node* p);
     void leftRightRotate(Node* p);
     void rightLeftRotate(Node* p);
+    void manualRotation();
 
     // Statistics
     int countBooks();

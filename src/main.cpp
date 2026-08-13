@@ -175,6 +175,8 @@ void loopMenu() {
             //Manual rotation at specific nodes    
             case 17:
                 //nothing
+                library.manualRotation();
+                waitEnter();
                 break;
 
             //Auto balance

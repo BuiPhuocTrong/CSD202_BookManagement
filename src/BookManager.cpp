@@ -677,6 +677,32 @@ void BookManager_BST::rotateLeft(){
     }
 
 } 
+void BookManager_BST::manualRotation() {
+    //input node
+    string id = inputString("Enter book ID to rotate: ");
+    //search for node
+    Node* p = searchById(id);
+    if (p == nullptr) {
+        cout << "Book ID not found" << endl;
+        return;
+    }
+    //input rotation type
+    cout << "Choose rotation type:\n";
+    cout << "1. Left Rotation\n";
+    cout << "2. Right Rotation\n";
+    cout << "0. Exit function\n";
+    string rotationType = inputString("Enter rotation type: ");
+    //perform rotation
+    if (rotationType == "1") {
+        leftRotate(p);
+    } else if (rotationType == "2") {
+        rightRotate(p);
+    } else if (rotationType == "0") {
+        cout << "\nExiting function...\n";
+    } else {
+        cout << "Invalid rotation type" << endl;
+    }
+}
 //Count total books
 int BookManager_BST::countBooks()
 {
